@@ -1,6 +1,23 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://alloy.liferay.com/tld/aui" prefix="aui" %>
 
+<%-- Links below are for the datatable --%>
+<script src="http://cdn.alloyui.com/3.0.1/aui/aui-min.js"></script>
+<link href="http://cdn.alloyui.com/3.0.1/aui-css/css/bootstrap.min.css" rel="stylesheet"></link>
+
+<script type="text/javascript">
+function confirmGetMessage() {
+  //display a confirmation box asking the visitor if they want to get a message
+  var theAnswer = confirm("Further edits cannot be made after submission. Are you sure you are ready to submit?");
+	
+  //if the user presses the "OK" button display the message "Javascript is cool!!"
+  if (theAnswer){
+     alert("SAVED! (Not really)");
+  }
+}
+</script>
+
+
 <portlet:defineObjects />
 
 <portlet:renderURL var="viewURL">
@@ -15,7 +32,7 @@
 
 <aui:layout>
 		<aui:column columnWidth="45" left="true">
-		
+
 			<aui:input name=""><b>FirstName</b></aui:input> 
 			<aui:input name=""><b>LastName</b></aui:input>
             <aui:input name=""><b>Address1</b></aui:input>
@@ -131,7 +148,67 @@
            </aui:column>
            </aui:layout> 
         	<h5>Please list any allergies/medical problems, including those requiring maintenance medication(i.e Diabetic, Asthma, Siezure Discorder)</h5>
+        
+        
+        
         //TABLE
+        
+        <div id="myDataTable"></div>
+        <aui:script>
+        YUI().use(
+        		  'aui-datatable',
+        		  'aui-datatype',
+        		  function(Y) {
+        		    var remoteData = [
+        		      {MedicalDiagnosis: null, Medication: null, Dosage: null, FrequencyOfDosage: null},
+        		      {MedicalDiagnosis: null, Medication: null, Dosage: null, FrequencyOfDosage: null},
+        		      {MedicalDiagnosis: null, Medication: null, Dosage: null, FrequencyOfDosage: null},
+        		      {MedicalDiagnosis: null, Medication: null, Dosage: null, FrequencyOfDosage: null}
+        		     
+        		    ];
+
+        		    var nestedCols = [
+        		      {
+        		        editor: new Y.TextAreaCellEditor(),
+        		        key: 'MedicalDiagnosis',
+        		        sortable: true
+        		      },
+        		      {
+        		        editor: new Y.TextAreaCellEditor(),
+        		        key: 'Medication'
+        		      },
+        		      {
+          		        editor: new Y.TextAreaCellEditor(),
+          		        key: 'Dosage'
+          		      },
+        		      {
+            		    editor: new Y.TextAreaCellEditor(),
+            		    key: 'FrequencyOfDosage'
+            		  }
+        		    ];
+
+        		    var dataTable = new Y.DataTable(
+        		      {
+        		        columns: nestedCols,
+        		        data: remoteData,
+        		        editEvent: 'click',
+        		        plugins: [
+        		          {
+        		            cfg: {
+        		              highlightRange: false
+        		            },
+        		            fn: Y.Plugin.DataTableHighlight
+        		          }
+        		        ]
+        		      }
+        		    ).render('#myDataTable');
+
+        		    dataTable.get('boundingBox').unselectable();
+        		  }
+        		);
+</aui:script>
+        
+        
         <h5>Last Date of Tetanus Toxoid Booster</h5>
         //Calender
         
@@ -153,8 +230,9 @@
 
         <aui:button-row>
 
-            <aui:button type="submit"></aui:button>
+            <aui:button onClick= "confirmGetMessage()" value="Submit"></aui:button>  <%-- type="submit" --%>
             <aui:button type="cancel" onClick="<%= viewURL.toString() %>"></aui:button>
 
         </aui:button-row>
+        
 </aui:form>
